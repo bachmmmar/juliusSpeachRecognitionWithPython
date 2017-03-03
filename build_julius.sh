@@ -9,7 +9,6 @@ function checkSuccess() {
 }
 
 function isCurrentDirBaseOfRepository() {
-    BUILD_DIR=$(pwd)/julius_build
     INSTALL_DIR=$(pwd)/julius_install
     SOURCE_DIR=$(pwd)/julius_source    
     if [ ! -e ${BUILD_DIR} ]; then
@@ -24,14 +23,14 @@ function isCurrentDirBaseOfRepository() {
 # Start Compile and installation
 isCurrentDirBaseOfRepository
 
-pushd $BUILD_DIR > /dev/null
-$SOURCE_DIR/configure --srcdir=${SOURCE_DIR} --prefix=${INSTALL_DIR} --enable-julius --enable-gramtools
+pushd $SOURCE_DIR > /dev/null
+$SOURCE_DIR/configure --prefix=${INSTALL_DIR}
 checkSuccess $? "Configure Julius"
 
-#make
+make
 checkSuccess $? "Build Julius"
 
-#make install
+make install
 checkSuccess $? "Installing Julius to ${INSTALL_DIR}"
 
 
