@@ -11,6 +11,7 @@ function checkSuccess() {
 function isCurrentDirBaseOfRepository() {
     INSTALL_DIR=$(pwd)/julius_install
     SOURCE_DIR=$(pwd)/julius_source    
+    WORD_DIR=$(pwd)/word_configuration
     if [ ! -e ${BUILD_DIR} ]; then
 	echo "build directory does not exists! You have to execute the script from the repository base directory!"
 	exit 1
@@ -32,6 +33,13 @@ checkSuccess $? "Build Julius"
 
 make install
 checkSuccess $? "Installing Julius to ${INSTALL_DIR}"
+
+pushd $WORD_DIR > /dev/null
+
+# Compile Word data
+$INSTALL_DIR/bin/mkdfa.pl babycamera
+checkSuccess $? "Could not generate babycamera data."
+
 
 
 
