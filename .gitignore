@@ -1,0 +1,7 @@
+
+# ignore the windows stuff of julius
+*.dll
+*/msvc/*
+
+# ignore japanese files
+*-ja.txt
