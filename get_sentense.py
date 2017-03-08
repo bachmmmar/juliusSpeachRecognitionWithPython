@@ -8,13 +8,12 @@ import logging
 from julius import Julius
 
 
-def main():
-    l=logging.getLogger()
-    l.setLevel(logging.DEBUG)
+def configure_logging():
+    l = logging.getLogger()
 
     # create console handler and set level to debug
     ch = logging.StreamHandler()
-    ch.setLevel(logging.WARNING)
+    ch.setLevel(logging.INFO)
 
     # create formatter
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -25,11 +24,19 @@ def main():
     # add ch to logger
     l.addHandler(ch)
 
+def main():
+
+    configure_logging()
+
     x=Julius()
+
+    x.setKeyword('computer')
 
     try:
         while 1:
-            x.getSentense()
+            w = x.sentenceIfKeywordMatch()
+            if len(w)>0:
+                print(w)
             time.sleep(0.1)
     except KeyboardInterrupt:
         print('Exiting...')
