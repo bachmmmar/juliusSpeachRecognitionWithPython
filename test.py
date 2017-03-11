@@ -4,7 +4,13 @@ import time
 import logging
 from julius import Julius
 from run_cmd import *
+from cmd_converter import CmdConverter
+from config_entry import ConfigEntry
 
+
+config = [ConfigEntry('take_pic', ['take make', 'picture photo'], RunCmd('echo "take_pic"')),
+          ConfigEntry('enable_baby', ['enable', 'baby surveillance'], RunCmd('touch "/tmp/enable_baby"')),
+          ConfigEntry('disable_baby', ['disable', 'baby surveillance'], RunCmd('touch "/tmp/disable_baby"'))]
 
 class ClientTestCase(unittest.TestCase):
 
@@ -39,6 +45,23 @@ class ClientTestCase(unittest.TestCase):
         rc = cmd.execute() # this should give a warning
         self.assertIs(rc, RunCmdRc.ALLREADY_RUNNING, "Second command should not run!")
 
+
+
+    def test_cmdCnv_getCmd(self):
+        cmd_cnv = CmdConverter(config,'computer')
+        c = cmd_cnv.getCommand('take picture')
+        self.assertEqual('take_pic',c.getName(), 'Name does not match! (take_pic vs. {}'.format(c.getName()))
+        c = cmd_cnv.getCommand('enable baby')
+        self.assertEqual('enable_baby', c.getName(), 'Name does not match! (enable_baby vs. {}'.format(c.getName()))
+        c = cmd_cnv.getCommand('disable surveillance')
+        self.assertEqual('disable_baby', c.getName(), 'Name does not match! (disable_baby vs. {}'.format(c.getName()))
+
+    def test_cmdCnv_checkKeyword(self):
+        cmd_cnv = CmdConverter(config,'computer')
+        s = cmd_cnv.getSentenceIfKeywordMatch('computer do')
+        self.assertEqual('do', s, 'Keyword not detected! Returned {}'.format(s))
+        s = cmd_cnv.getSentenceIfKeywordMatch('adsf do')
+        self.assertEqual('', s, 'No Keyword should be detected! Returned {}'.format(s))
 
 
 def configure_logging():
