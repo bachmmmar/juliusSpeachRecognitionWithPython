@@ -1,6 +1,7 @@
-import subprocess
 import threading
 import logging
+import subprocess
+#from subprocess import check_call
 
 logger = logging.getLogger(__name__)
 
@@ -9,14 +10,23 @@ class RunCmd():
     def __init__(self, command_str):
         self.task_running_=False
         self.command_ = command_str
+        self.thread_ = threading.Thread(target=self.run_cmd);
+        self.success_ = True
 
     def __del__(self):
-        self.join()
+        if self.task_running_:
+            self.thread_.join()
 
     def run_cmd(self):
-        """Thread which runs a task"""
+        """Function which runs in a separate thred"""
 
-        subprocess.Popen(self.command_)
+        #execute the command
+        try:
+            subprocess.check_call(self.command_, shell=True)
+            self.success_ = True
+        except subprocess.CalledProcessError as e:
+            logger.error('executing command "{}" returned {}. Message:"{}"'.format(self.command_, e.returncode, e.stderr))
+            self.success_ = False
 
         self.task_running_ = False
 
@@ -24,9 +34,7 @@ class RunCmd():
     def execute(self):
         if not self.task_running_:
             self.task_running_ = True
-            threading.Thread(target=self.run_cmd).start()
+            self.thread_.start()
+            logger.info('Process {} started'.format(self.command_))
         else:
-            logger.info('Process {} allready running'.format(self.command_))
-
-
-
+            logger.warning('Process {} allready running'.format(self.command_))
