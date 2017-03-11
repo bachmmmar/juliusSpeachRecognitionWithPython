@@ -1,9 +1,13 @@
 import threading
 import logging
 import subprocess
-#from subprocess import check_call
+from enum import Enum
 
 logger = logging.getLogger(__name__)
+
+class RunCmdRc(Enum):
+    OK = 0
+    ALLREADY_RUNNING = 1
 
 class RunCmd():
 
@@ -36,5 +40,7 @@ class RunCmd():
             self.task_running_ = True
             self.thread_.start()
             logger.info('Process {} started'.format(self.command_))
+            return RunCmdRc.OK
         else:
             logger.warning('Process {} allready running'.format(self.command_))
+            return RunCmdRc.ALLREADY_RUNNING

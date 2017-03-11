@@ -3,7 +3,7 @@ import sys
 import time
 import logging
 from julius import Julius
-from run_cmd import RunCmd
+from run_cmd import *
 
 
 class ClientTestCase(unittest.TestCase):
@@ -34,8 +34,11 @@ class ClientTestCase(unittest.TestCase):
 
     def test_runCmdAllreadyRunning(self):
         cmd = RunCmd('sleep 2')
-        cmd.execute()
-        cmd.execute() # this should give a warning
+        rc = cmd.execute()
+        self.assertIs(rc,RunCmdRc.OK, "First command should run.")
+        rc = cmd.execute() # this should give a warning
+        self.assertIs(rc, RunCmdRc.ALLREADY_RUNNING, "Second command should not run!")
+
 
 
 def configure_logging():
