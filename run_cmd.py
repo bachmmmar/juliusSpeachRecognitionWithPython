@@ -14,7 +14,7 @@ class RunCmd():
     def __init__(self, command_str):
         self.task_running_=False
         self.command_ = command_str
-        self.thread_ = threading.Thread(target=self.run_cmd);
+        self.thread_ = None
         self.success_ = True
 
     def __del__(self):
@@ -38,6 +38,7 @@ class RunCmd():
     def execute(self):
         if not self.task_running_:
             self.task_running_ = True
+            self.thread_ = threading.Thread(target=self.run_cmd);
             self.thread_.start()
             logger.info('Process {} started'.format(self.command_))
             return RunCmdRc.OK

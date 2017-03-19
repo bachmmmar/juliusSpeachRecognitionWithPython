@@ -22,6 +22,18 @@ class ClientTestCase(unittest.TestCase):
 
         self.assertTrue(cmd.success_,"Exit code should indicate success!")
 
+    def test_rerunCmdSimple(self):
+        cmd = RunCmd('echo "take_pic"')
+        cmd.execute()
+        while cmd.task_running_:
+            time.sleep(0.1)
+
+        cmd.execute()
+        while cmd.task_running_:
+            time.sleep(0.1)
+
+        self.assertTrue(cmd.success_,"Exit code should indicate success!")
+
     def test_runCmdWithDelay(self):
         cmd = RunCmd('sleep 3')
         cmd.execute()
