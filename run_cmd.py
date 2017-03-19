@@ -29,7 +29,7 @@ class RunCmd():
             subprocess.check_call(self.command_, shell=True)
             self.success_ = True
         except subprocess.CalledProcessError as e:
-            logger.error('executing command "{}" returned {}. Message:"{}"'.format(self.command_, e.returncode, e.stderr))
+            logger.error('executing command "{}" returned {}. Message:"{}"'.format(self.command_, e.returncode, str(e.output)))
             self.success_ = False
 
         self.task_running_ = False
