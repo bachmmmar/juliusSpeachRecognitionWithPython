@@ -31,11 +31,21 @@ def configure_logging():
 
 config = [ConfigEntry('take_pic', ['take make', 'picture photo'], RunCmd('echo "take_pic"')),
           ConfigEntry('enable_baby', ['enable', 'baby surveillance'], RunCmd('touch "/tmp/enable_baby"')),
-          ConfigEntry('disable_baby', ['disable', 'baby surveillance'], RunCmd('touch "/tmp/disable_baby"'))]
+          ConfigEntry('disable_baby', ['disable', 'baby surveillance'], RunCmd('rm "/tmp/enable_baby"'))]
 
 
 def main():
     configure_logging()
+
+    # start julius
+    jul = RunCmd('export ALSADEV="dsnooped2"; ./julius_install/bin/julius -C babycamera.jconf -input alsa -module')
+    jul.execute()
+    time.sleep(5)
+    if jul.task_running_:
+        print("julisus started!")
+    else:
+        print("failed to start julius")
+        sys.exit(1)            
 
     x = Julius()
 
@@ -47,7 +57,7 @@ def main():
             c = cmd_cnv.extractCommand(s)
             if c is not None:
                 print('detected cfg: {}'.format(c.getName()))
-                config.getExecutable().execute()
+                c.getExecutable().execute()
             time.sleep(0.1)
     except KeyboardInterrupt:
         print('Exiting...')
